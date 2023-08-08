@@ -4,7 +4,7 @@ package banking3;
 
 import java.util.Scanner;
 
-//추상메서드 
+//추상 클래스
 public abstract class Account {
     private String accountNum; //계좌번호
     private String name; //이름
@@ -45,7 +45,7 @@ public abstract class Account {
     
 //    public void calculateInterest() { //하위 클래스에서 오버라이드 하여 구현	
 //    }
-    public abstract void calculateInterest();//추상메서드
+    public abstract void calculateInterest();//추상 클래스
     
     public String getAccountNum() {
     	return accountNum; 

@@ -34,10 +34,25 @@ public class AccountManager {
 		System.out.println("2.신용신뢰계좌");
 		System.out.println("선택:");
 		
-		//선택받을 변수생성
-		int choice = sc.nextInt();
 		
-		//계좌정보를 받는다
+		/* int choice = -1;로 변경한 이유는 사용자의 선택을 입력 받을 때, 입력이 잘못된 경우 예외 처리를 위한 초기화를 한 것.
+		원래대로라면 sc.nextInt();로 입력을 받을 때, 정상적인 정수가 입력되어야 합니다. 그러나 사용자가 정수 대신 문자를 입력하면 
+		InputMismatchException이 발생함. 이때 초기화되지 않은 choice 변수가 그대로 남아있게 되면, 예외 처리 후에도 
+		잘못된 값으로 남아있을 수 있음. 따라서 먼저 choice 변수를 -1로 초기화해둠으로써, 예외 발생 시 기본적인 초기값을 사용하도록
+		하여 프로그램의 안정성을 높이고자 한 것입니다. 이후 사용자 입력이 정상적인 경우 choice 변수에 올바른 값을 할당하게 됨. */
+		int choice = -1; //입력된 값이 잘못되었을 경우 예외처리를 위한 초기화
+		
+		try {
+			choice = sc.nextInt();
+		} 
+		catch (InputMismatchException e) {
+			System.out.println("잘못된 입력입니다.");
+			sc.nextLine(); // 입력버퍼 비우기
+			return;
+		}
+		
+		
+		//계좌등록
 		System.out.println("계좌번호:");
 		String accountNum = sc.next();
 		System.out.println("고객이름:");
@@ -73,18 +88,48 @@ public class AccountManager {
 		System.out.println("******입 금*****");
 		System.out.println("계좌번호:");
 		String accountNum = sc.next();
-		System.out.println("입금액:");
-		int amount = sc.nextInt();
 		
 		Account account = findAccount(accountNum);
 		if(account != null) {
+			int amount = -1;
+			
+			while (amount < 0) {
+				try {
+					System.out.println("입금액:");
+					amount = sc.nextInt();
+					if(amount < 0) {
+						System.out.println("음수를 입금할 수 없습니다.");
+					}
+					else if (amount % 500 != 0) {
+						System.out.println("입금액은 500원 단위로 가능합니다.");
+						amount = -1; //조건에 맞지 않을 경우 재입력을 위해 초기화
+					}
+				} 
+				catch (InputMismatchException e) {
+					System.out.println("잘못된 입력입니다. 숫자로 입력해주세요.");
+					sc.nextLine();
+				}
+			}
 			account.deposit(amount);
-			account.calculateInterest(); //이자계산
+			account.calculateInterest();
 			System.out.println("입금 및 이자 계산이 완료되었습니다.");
 		}
 		else {
 			System.out.println("계좌를 찾을 수 없습니다.");
 		}
+		
+		System.out.println("입금액:");
+		int amount = sc.nextInt();
+		
+//		Account account = findAccount(accountNum);
+//		if(account != null) {
+//			account.deposit(amount);
+//			account.calculateInterest(); //이자계산
+//			System.out.println("입금 및 이자 계산이 완료되었습니다.");
+//		}
+//		else {
+//			System.out.println("계좌를 찾을 수 없습니다.");
+//		}
 	}
 	//출금
 	public void withdrawMoney() {
@@ -129,6 +174,4 @@ public class AccountManager {
 		}
 		return null;
 	}
-	
-
 }
