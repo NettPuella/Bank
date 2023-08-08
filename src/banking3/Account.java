@@ -1,11 +1,11 @@
-package banking2;
+package banking3;
 
 /////////////////계좌정보 입출금 관리//////////////////////
 
 import java.util.Scanner;
 
-
-public class Account {
+//추상메서드 
+public abstract class Account {
     private String accountNum; //계좌번호
     private String name; //이름
     protected  int balance; //잔액
@@ -41,8 +41,12 @@ public class Account {
     	}
     }
     //이자 계산은 하위 클래스(HighCreditAccount)에서 구현
-    public void calculateInterest() { //하위 클래스에서 오버라이드 하여 구현	
-    }
+    
+    
+//    public void calculateInterest() { //하위 클래스에서 오버라이드 하여 구현	
+//    }
+    public abstract void calculateInterest();//추상메서드
+    
     public String getAccountNum() {
     	return accountNum; 
     }
