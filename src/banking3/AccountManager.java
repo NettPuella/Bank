@@ -93,43 +93,39 @@ public class AccountManager {
 		if(account != null) {
 			int amount = -1;
 			
-			while (amount < 0) {
+			while (amount < 0 || amount % 500 != 0) {
 				try {
-					System.out.println("입금액:");
+					System.out.println("입금액(500원단위):");
 					amount = sc.nextInt();
 					if(amount < 0) {
 						System.out.println("음수를 입금할 수 없습니다.");
 					}
 					else if (amount % 500 != 0) {
 						System.out.println("입금액은 500원 단위로 가능합니다.");
-						amount = -1; //조건에 맞지 않을 경우 재입력을 위해 초기화
+						//amount = -1; //조건에 맞지 않을 경우 재입력을 위해 초기화
+					}
+					else {
+						account.deposit(amount);
+						account.calculateInterest();
+						System.out.println("입금 및 이자 계산이 완료되었습니다.");
+						return; //정상적인 입력이 들어오면 반복문을 빠져나감
 					}
 				} 
 				catch (InputMismatchException e) {
 					System.out.println("잘못된 입력입니다. 숫자로 입력해주세요.");
-					sc.nextLine();
+					sc.nextLine(); //입력 버퍼 비우기
 				}
 			}
-			account.deposit(amount);
-			account.calculateInterest();
-			System.out.println("입금 및 이자 계산이 완료되었습니다.");
+//			account.deposit(amount);
+//			account.calculateInterest();
+//			System.out.println("입금 및 이자 계산이 완료되었습니다.");
 		}
 		else {
 			System.out.println("계좌를 찾을 수 없습니다.");
 		}
 		
-		System.out.println("입금액:");
-		int amount = sc.nextInt();
-		
-//		Account account = findAccount(accountNum);
-//		if(account != null) {
-//			account.deposit(amount);
-//			account.calculateInterest(); //이자계산
-//			System.out.println("입금 및 이자 계산이 완료되었습니다.");
-//		}
-//		else {
-//			System.out.println("계좌를 찾을 수 없습니다.");
-//		}
+//		System.out.println("입금액:");
+//		int amount = sc.nextInt();
 	}
 	//출금
 	public void withdrawMoney() {
@@ -137,16 +133,57 @@ public class AccountManager {
 		System.out.println("*****출 금******");
 		System.out.println("계좌번호:");
 		String accountNum = sc.next();
-		System.out.println("출금액:");
-		int amount = sc.nextInt();
 		
 		Account account = findAccount(accountNum);
 		if(account != null) {
+			int amount = -1;
+			
+			while(amount < 0 || amount % 1000 != 0 || amount > account.getBalance()) {
+				try {
+					System.out.println("출금액(1000원단위):");
+					amount = sc.nextInt();
+					if(amount < 0) {
+						System.out.println("음수를 출금할 수 없습니다.");
+					}
+					else if (amount % 1000 !=0) {
+						System.out.println("출금액은 1000원 단위로 가능합니다.");
+						//amount = -1; //조건에 맞지 않을 경우 재입력을 위해 초기화
+					}
+					else if (amount > account.getBalance()) {
+						System.out.print("잔고가 부족합니다. 금액 전체를 출금할까요? (YES or NO):");
+						String confirm = sc.next();
+						if (confirm.equalsIgnoreCase("YES")) {
+							amount = account.getBalance(); //금액전체 출금
+						}
+						else {
+							System.out.println("출금 요청이 취소되었습니다.");
+							return; //출금요청 취소
+						}
+					}
+				}
+				catch(InputMismatchException e) {
+					System.out.println("잘못된 입력입니다. 숫자로 입력해주세요.");
+					sc.nextLine(); //입력버퍼 비우기
+				}
+			}
 			account.withdraw(amount);
+			System.out.println("출금이 완료되었습니다.");
 		}
 		else {
 			System.out.println("계좌를 찾을 수 없습니다.");
 		}
+		
+		
+//		System.out.println("출금액:");
+//		int amount = sc.nextInt();
+//		
+//		Account account = findAccount(accountNum);
+//		if(account != null) {
+//			account.withdraw(amount);
+//		}
+//		else {
+//			System.out.println("계좌를 찾을 수 없습니다.");
+//		}
 	}
 	//전체계좌정보 출력
 	public void showAllAccounts() {
